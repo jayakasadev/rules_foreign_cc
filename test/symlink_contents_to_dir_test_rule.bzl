@@ -7,8 +7,8 @@ load("@rules_foreign_cc//foreign_cc/private/framework:helpers.bzl", "convert_she
 
 def _symlink_contents_to_dir_test_rule_impl(ctx):
     out = ctx.actions.declare_file(ctx.attr.out)
-    dir1 = detect_root(ctx.attr.dir1)
-    dir2 = detect_root(ctx.attr.dir2)
+    dir1 = detect_root([ctx.attr.dir1])
+    dir2 = detect_root([ctx.attr.dir2])
     script_lines = [
         "##mkdirs## aaa",
         "##symlink_contents_to_dir## %s aaa False" % dir1,

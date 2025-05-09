@@ -1,6 +1,6 @@
 # buildifier: disable=module-docstring
 # buildifier: disable=function-docstring-header
-def detect_root(source):
+def detect_root(srcs, hdrs = []):
     """Detects the path to the topmost directory of the 'source' outputs.
     To be used with external build systems to point to the source code/tools directories.
 
@@ -11,7 +11,11 @@ def detect_root(source):
         string: The relative path to the root source directory
     """
 
-    sources = source.files.to_list()
+    sources = []
+    for source in srcs:
+        sources.extend(source.files.to_list())
+    for header in hdrs:
+        sources.extend(header.files.to_list())
     if len(sources) == 0:
         return ""
 

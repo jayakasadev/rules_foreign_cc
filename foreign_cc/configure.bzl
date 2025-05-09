@@ -88,7 +88,7 @@ def _create_configure_script(configureParameters):
         workspace_name = ctx.workspace_name,
         tools = tools,
         flags = flags,
-        root = detect_root(ctx.attr.lib_source),
+        root = detect_root(ctx.attr.srcs, ctx.attr.hdrs),
         user_options = configure_options,
         configure_prefix = configure_prefix,
         configure_command = ctx.attr.configure_command,

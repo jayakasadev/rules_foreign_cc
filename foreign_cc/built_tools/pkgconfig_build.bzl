@@ -156,7 +156,7 @@ def pkgconfig_tool(name, srcs, **kwargs):
 
     make_variant(
         name = "{}_msvc_build".format(name),
-        lib_source = srcs,
+        srcs = [srcs],
         args = [
             "-f Makefile.vc",
             "CFG=release",

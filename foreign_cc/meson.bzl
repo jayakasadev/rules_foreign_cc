@@ -96,7 +96,7 @@ def _create_meson_script(configureParameters):
     script.append("##export_var## NINJA {}".format(attrs.ninja_path))
     script.append("##export_var## PKG_CONFIG {}".format(attrs.pkg_config_path))
 
-    root = detect_root(ctx.attr.lib_source)
+    root = detect_root(ctx.attr.srcs, ctx.attr.hdrs)
     data = ctx.attr.data + ctx.attr.build_data
 
     # Generate a list of arguments for meson

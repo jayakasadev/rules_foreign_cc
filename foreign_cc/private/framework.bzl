@@ -136,13 +136,15 @@ CC_EXTERNAL_RULE_ATTRIBUTES = {
         ),
         mandatory = False,
     ),
-    "lib_source": attr.label(
-        doc = (
-            "Label with source code to build. Typically a filegroup for the source of remote repository. " +
-            "Mandatory."
-        ),
-        mandatory = True,
-        allow_files = True,
+    "srcs": attr.label_list(
+        doc = "Label with source code to build. Typically a filegroup for the srcs of remote repository.",
+        mandatory = False,
+        default = [],
+    ),
+    "hdrs": attr.label_list(
+        doc = "Label with source code to build. Typically a filegroup for the headers of remote repository.",
+        mandatory = False,
+        default = [],
     ),
     "linkopts": attr.string_list(
         doc = "Optional link options to be passed up to the dependencies of this library",
@@ -565,7 +567,7 @@ def cc_external_rule_impl(ctx, attrs):
                 transitive_shared_libraries.append(lib.dynamic_library)
 
     runfiles = ctx.runfiles(files = ctx.files.data + transitive_shared_libraries)
-    for target in [ctx.attr.lib_source] + ctx.attr.deps + ctx.attr.data:
+    for target in ctx.attr.srcs + ctx.attr.hdrs + ctx.attr.deps + ctx.attr.data:
         runfiles = runfiles.merge(target[DefaultInfo].default_runfiles)
 
     # TODO: `additional_inputs` is deprecated, remove.
@@ -961,6 +963,13 @@ def _define_inputs(attrs):
     # These variables are needed for correct C/C++ providers constraction,
     # they should contain all libraries and include directories.
     cc_info_merged = cc_common.merge_cc_infos(cc_infos = cc_infos)
+
+    merged_files = []
+    for source in attrs.srcs:
+        merged_files.extend(source.files.to_list())
+    for header in attrs.hdrs:
+        merged_files.extend(header.files.to_list())
+
     return InputFiles(
         headers = bazel_headers,
         include_dirs = bazel_system_includes,
@@ -969,7 +978,7 @@ def _define_inputs(attrs):
         deps_compilation_info = cc_info_merged.compilation_context,
         deps_linking_info = cc_info_merged.linking_context,
         ext_build_dirs = ext_build_dirs,
-        declared_inputs = filter_containing_dirs_from_inputs(attrs.lib_source.files.to_list()) +
+        declared_inputs = filter_containing_dirs_from_inputs(merged_files) +
                           bazel_libs +
                           tools_files +
                           input_files +
@@ -1016,9 +1025,8 @@ def _get_headers(compilation_info):
     )
 
 def _define_out_cc_info(ctx, attrs, inputs, outputs):
-    print("create_compilation_context", [DirectoryExpander.expand(file) for file in depset([outputs.out_include_dir]).to_list()])
     compilation_info = cc_common.create_compilation_context(
-        headers = depset([outputs.out_include_dir]),
+        headers = depset([outputs.out_include_dir] + attrs.hdrs),
         system_includes = depset([outputs.out_include_dir.path] + [
             outputs.out_include_dir.path + "/" + include
             for include in attrs.includes

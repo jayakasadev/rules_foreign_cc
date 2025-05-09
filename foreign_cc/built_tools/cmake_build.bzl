@@ -25,7 +25,7 @@ def cmake_tool(name, srcs, **kwargs):
         # to prevent errors with incompatible _WIN32_WINNT in cmlibarchive
         # override NTDDI_VERSION to match _WIN32_WINNT set in the default cc_toolchain
         copts = ["/D NTDDI_VERSION=0x06010000"],
-        lib_source = srcs,
+        srcs = [srcs],
         out_binaries = ["cmake.exe"],
         toolchain = "@rules_foreign_cc//toolchains:preinstalled_cmake_toolchain",
         tags = tags,
@@ -37,7 +37,7 @@ def cmake_tool(name, srcs, **kwargs):
         configure_command = "bootstrap",
         # On macOS at least -DDEBUG gets set for a fastbuild
         copts = ["-UDEBUG"],
-        lib_source = srcs,
+        srcs = [srcs],
         out_binaries = select({
             "@platforms//os:windows": ["cmake.exe"],
             "//conditions:default": ["cmake"],

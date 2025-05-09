@@ -51,7 +51,7 @@ def _create_ninja_script(configureParameters):
 
     script = []
 
-    root = detect_root(ctx.attr.lib_source)
+    root = detect_root(ctx.attr.srcs, ctx.attr.hdrs)
     script.append("##symlink_contents_to_dir## $$EXT_BUILD_ROOT$$/{} $$BUILD_TMPDIR$$ False".format(root))
 
     data = ctx.attr.data + ctx.attr.build_data
@@ -99,7 +99,7 @@ def _attrs():
         "directory": attr.string(
             doc = (
                 "A directory to pass as the `-C` argument. The rule will always use the root " +
-                "directory of the `lib_sources` attribute if this attribute is not set"
+                "directory of the `srcs` attribute if this attribute is not set"
             ),
         ),
     })

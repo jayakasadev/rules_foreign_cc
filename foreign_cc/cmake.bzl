@@ -68,7 +68,7 @@ cmake(
     cache_entries = {
         "CMAKE_C_FLAGS": "-fPIC",
     },
-    lib_source = "@pcre//:all_srcs",
+    srcs = ["@pcre//:all_srcs"],
     out_static_libs = ["libpcre.a"],
 )
 ```
@@ -101,7 +101,7 @@ cmake(
         "-G \\"Visual Studio 16 2019\\"",
         "-A Win64",
     ],
-    lib_source = ":srcs",
+    srcs = [":srcs"],
 )
 
 cmake(
@@ -110,14 +110,14 @@ cmake(
     lib_name = "hello",
     # explicitly specify the generator
     generate_args = ["-GNinja"],
-    lib_source = ":srcs",
+    srcs = [":srcs"],
 )
 
 cmake(
     name = "hello_nmake",
     # explicitly specify the generator
     generate_args = ["-G \\"NMake Makefiles\\""],
-    lib_source = ":srcs",
+    srcs = [":srcs"],
     # expect to find ./lib/hello.lib as the result of the build
     out_static_libs = ["hello.lib"],
 )
@@ -195,7 +195,7 @@ def _create_configure_script(configureParameters):
     attrs = configureParameters.attrs
     inputs = configureParameters.inputs
 
-    root = detect_root(ctx.attr.lib_source)
+    root = detect_root(ctx.attr.srcs, ctx.attr.hdrs)
     if len(ctx.attr.working_directory) > 0:
         root = root + "/" + ctx.attr.working_directory
 
@@ -410,7 +410,7 @@ def _attrs():
         "working_directory": attr.string(
             doc = (
                 "Working directory, with the main CMakeLists.txt " +
-                "(otherwise, the top directory of the lib_source label files is used.)"
+                "(otherwise, the top directory of the srcs label files is used.)"
             ),
             mandatory = False,
             default = "",

@@ -22,7 +22,7 @@ def _boost_build_impl(ctx):
 
 def _create_configure_script(configureParameters):
     ctx = configureParameters.ctx
-    root = detect_root(ctx.attr.lib_source)
+    root = detect_root(ctx.attr.srcs, ctx.attr.hdrs)
     data = ctx.attr.data + ctx.attr.build_data
     user_options = expand_locations_and_make_variables(ctx, ctx.attr.user_options, "user_options", data)
 

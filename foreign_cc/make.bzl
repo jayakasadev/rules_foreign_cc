@@ -42,7 +42,7 @@ def _create_make_script(configureParameters):
     attrs = configureParameters.attrs
     inputs = configureParameters.inputs
 
-    root = detect_root(ctx.attr.lib_source)
+    root = detect_root(ctx.attr.srcs, ctx.attr.hdrs)
 
     tools = get_tools_info(ctx)
     flags = get_flags_info(ctx)
